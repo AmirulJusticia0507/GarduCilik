@@ -19,15 +19,6 @@ const ROOM_LAYOUT: readonly {
   { id: "bathroom", x: 249, y: 188, width: 180, height: 142 },
 ];
 
-const ROOM_CENTERS: Record<RoomId, { x: number; y: number }> = {
-  "living-room": { x: 136, y: 113 },
-  kitchen: { x: 339, y: 113 },
-  bedroom: { x: 136, y: 259 },
-  bathroom: { x: 339, y: 259 },
-  terrace: { x: 429, y: 300 },
-  garage: { x: 429, y: 300 },
-};
-
 const APPLIANCE_ICON: Record<string, string> = {
   lighting: "✦",
   cooling: "❄",

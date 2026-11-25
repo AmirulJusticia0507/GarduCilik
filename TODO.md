@@ -29,7 +29,7 @@ Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Repository s
 
 ## Dokumentasi dan rilis lokal
 
-- [ ] **T14 — Rapikan dokumentasi dan verifikasi aplikasi**: perbaiki encoding README, selaraskan dokumentasi root/backend dengan implementasi, jelaskan batas simulasi edukatif, dan jalankan pemeriksaan build yang sudah dikonfigurasi.
+- [x] **T14 — Rapikan dokumentasi dan verifikasi aplikasi**: perbaiki encoding README, selaraskan dokumentasi root/backend dengan implementasi, jelaskan batas simulasi edukatif, dan jalankan pemeriksaan build yang sudah dikonfigurasi. **Selesai:** README root/backend dan dokumentasi backend kini sesuai implementasi Next.js/PWA, engine TypeScript, dan API Go; batas model dan sifat sanity check dicantumkan; verifikasi typecheck, lint, 50 tes frontend, build produksi, serta tes Go dijalankan.
 
 ## Catatan urutan dan alur kerja
 

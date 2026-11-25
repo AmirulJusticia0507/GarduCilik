@@ -2,7 +2,7 @@
 
 ## Project context
 
-GarduCilik is an educational browser game concept for teaching children about household electricity, energy use, and electrical safety. The current repository contains a README concept only; the application source, build configuration, and simulation engine have not been added yet.
+GarduCilik is an educational browser game for teaching children about household electricity, energy use, and electrical safety. The frontend is Next.js/TypeScript with a local TypeScript simulation engine and PWA support. A Go/Fiber/PostgreSQL API supports classroom accounts, scenarios, session submissions, and leaderboards. No C++/WebAssembly source is currently present; keep docs accurate to the checked-in implementation.
 
 ## Working rules
 
