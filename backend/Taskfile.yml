@@ -1,0 +1,54 @@
+version: '3'
+
+dotenv: ['.env']
+
+vars:
+  DATABASE_URL: '{{.DATABASE_URL | default ""}}'
+
+tasks:
+  default:
+    desc: Tampilkan daftar task backend
+    cmds:
+      - task --list
+
+  run:
+    desc: Jalankan API Go secara lokal
+    cmds:
+      - go run ./cmd/api
+
+  test:
+    desc: Jalankan seluruh test Go
+    cmds:
+      - go test ./...
+
+  vet:
+    desc: Jalankan pemeriksaan go vet
+    cmds:
+      - go vet ./...
+
+  fmt:
+    desc: Format seluruh source Go
+    cmds:
+      - gofmt -w cmd internal
+
+  tidy:
+    desc: Rapikan dependensi Go
+    cmds:
+      - go mod tidy
+
+  migrate:
+    desc: Terapkan migrasi PostgreSQL awal
+    preconditions:
+      - sh: test -n "{{.DATABASE_URL}}"
+        msg: DATABASE_URL wajib diisi di environment atau file .env
+      - sh: command -v psql
+        msg: psql tidak ditemukan; instal PostgreSQL client terlebih dahulu
+    cmds:
+      - psql "{{.DATABASE_URL}}" -v ON_ERROR_STOP=1 -f migrations/001_init_schema.sql
+
+  check:
+    desc: Format, test, dan vet backend
+    cmds:
+      - task: fmt
+      - task: test
+      - task: vet

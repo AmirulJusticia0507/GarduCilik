@@ -21,6 +21,34 @@ go run ./cmd/api
 
 Health check: `GET http://localhost:8080/health`.
 
+## Task runner
+
+Backend menyediakan `Taskfile.yml` untuk perintah yang sering dipakai. Instal
+Task dari [taskfile.dev](https://taskfile.dev/installation/), lalu jalankan
+perintah dari direktori `backend/`:
+
+```powershell
+task --list       # daftar task
+task migrate      # terapkan migrations/001_init_schema.sql
+task run          # jalankan API
+task test         # go test ./...
+task vet          # go vet ./...
+task fmt          # gofmt -w cmd internal
+task check        # fmt + test + vet
+```
+
+Task `migrate` membutuhkan `DATABASE_URL` pada `.env` atau environment serta
+program `psql` yang tersedia di PATH. Perintah Go langsung tetap menjadi
+fallback jika Task belum diinstal:
+
+```powershell
+go run ./cmd/api
+go test ./...
+go vet ./...
+gofmt -w cmd internal
+psql "$env:DATABASE_URL" -v ON_ERROR_STOP=1 -f migrations/001_init_schema.sql
+```
+
 Variabel konfigurasi: `PORT`, `DATABASE_URL`, `JWT_SECRET`, `JWT_TTL`, `DB_MAX_CONNS`, dan `FRONTEND_ORIGIN`. CORS mengizinkan origin frontend yang ditentukan; nilai bawaan lokalnya `http://localhost:3000`.
 
 ## Endpoint yang tersedia
@@ -44,6 +72,6 @@ Payload submit memuat `scenario_id`, `classroom_id` opsional, `total_kwh_used`, 
 
 ## Database
 
-Skema awal berada di `migrations/001_init_schema.sql`: `users`, `classrooms`, `classroom_members`, `scenarios`, dan `session_logs`. Migrasi saat ini dijalankan manual dengan `psql`.
+Skema awal berada di `migrations/001_init_schema.sql`: `users`, `classrooms`, `classroom_members`, `scenarios`, dan `session_logs`. Migrasi dapat dijalankan dengan `task migrate` atau langsung menggunakan `psql`.
 
 Jangan gunakan nilai rahasia contoh untuk deployment. Simpan `JWT_SECRET` dan kredensial database di secret store lingkungan deployment.
