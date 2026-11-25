@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="GarduCilik">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#065f46" />
+      <stop offset="1" stop-color="#052e16" />
+    </linearGradient>
+    <linearGradient id="bolt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fef08a" />
+      <stop offset="1" stop-color="#facc15" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)" />
+  <path d="M64 384H448M64 320H448" stroke="#ffffff" stroke-opacity="0.08" stroke-width="8" />
+  <path d="M144 392V268L256 180L368 268V392Z" fill="#ecfdf5" fill-opacity="0.12" />
+  <path d="M112 264L256 144L400 264" fill="none" stroke="#d1fae5" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M144 268V392H368V268" fill="none" stroke="#d1fae5" stroke-width="24" stroke-linejoin="round" />
+  <path d="M282 214L202 322H254L236 392L332 278H278Z" fill="url(#bolt)" stroke="#052e16" stroke-width="10" stroke-linejoin="round" />
+</svg>
