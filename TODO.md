@@ -11,7 +11,7 @@ Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Repository s
 
 - [x] **T3 — Implementasikan engine simulasi C++**: buat struktur `engine-cpp/`, model perangkat dan level, kalkulasi daya aktif/semu, power factor, inrush sementara, akumulasi kWh, panas kabel, serta kurva trip MCB dengan parameter yang terdokumentasi.
 - [x] **T4 — Bangun binding dan artefak WebAssembly**: sediakan binding Embind dan build Emscripten yang menghasilkan modul JavaScript/WASM untuk frontend, beserta cara build yang dapat diulang.
-- [ ] **T5 — Integrasikan lifecycle engine ke frontend**: buat `useGridEngine` untuk memuat modul WASM, menerapkan konfigurasi JSON, menjalankan tick simulasi, mengelola status dan error, serta membersihkan `requestAnimationFrame` saat komponen dilepas.
+- [x] **T5 — Integrasikan lifecycle engine ke frontend**: buat `useGridEngine` untuk memuat modul WASM, menerapkan konfigurasi JSON, menjalankan tick simulasi, mengelola status dan error, serta membersihkan `requestAnimationFrame` saat komponen dilepas. **Selesai:** loader WASM client-only dengan `locateFile`, konfigurasi JSON, status `loading/ready/fallback/error`, fallback engine TypeScript yang eksplisit saat artefak belum tersedia, RAF pause/visibility, dan cleanup saat unmount.
 
 ## Backend Go / PostgreSQL
 

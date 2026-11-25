@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createGridEngine } from "../lib/simulation/engine";
+import {
+  loadGridEngine,
+  type EngineLoadStatus,
+} from "../lib/simulation/wasm-loader";
 import type {
   ApplianceId,
   EngineResult,
@@ -13,7 +17,12 @@ import type {
 /** UI meter cukup diperbarui 20 kali per detik; engine tetap maju tiap frame. */
 const PUBLISH_INTERVAL_MS = 50;
 
-export type GridRuntimeStatus = "running" | "paused" | "tab-hidden";
+export type GridRuntimeStatus =
+  | "loading"
+  | "running"
+  | "paused"
+  | "tab-hidden"
+  | "error";
 
 export interface UseGridEngineResult {
   /** Snapshot terakhir yang dipublikasikan ke React. */
@@ -33,6 +42,10 @@ export interface UseGridEngineResult {
   toggleAppliance: (id: ApplianceId) => EngineResult;
   resetBreaker: () => EngineResult;
   restartLevel: () => EngineResult;
+  /** Status sumber engine agar fallback lokal tidak disalahartikan sebagai WASM. */
+  engineStatus: EngineLoadStatus;
+  engineSource: "wasm" | "typescript";
+  engineError: Error | null;
 }
 
 /**
@@ -49,7 +62,12 @@ export interface UseGridEngineResult {
  * agar engine tidak dibuat ulang tanpa sengaja pada setiap render.
  */
 export function useGridEngine(level: LevelConfig): UseGridEngineResult {
-  const [engine] = useState(() => createGridEngine(level));
+  const [engine, setEngine] = useState(() => createGridEngine(level));
+  const [engineStatus, setEngineStatus] = useState<EngineLoadStatus>("loading");
+  const [engineSource, setEngineSource] = useState<"wasm" | "typescript">(
+    "typescript",
+  );
+  const [engineError, setEngineError] = useState<Error | null>(null);
   const [snapshot, setSnapshot] = useState<GridSnapshot>(() =>
     engine.getSnapshot(),
   );
@@ -64,6 +82,33 @@ export function useGridEngine(level: LevelConfig): UseGridEngineResult {
   const lastTimestampRef = useRef<number | null>(null);
   const lastPublishRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    // Engine loading is an external async resource; these state updates are
+    // intentional and are guarded by the cancellation flag below.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setEngineStatus("loading");
+    setEngineError(null);
+
+    void loadGridEngine(level).then((loaded) => {
+      if (cancelled) {
+        return;
+      }
+      setEngine(loaded.engine);
+      setEngineStatus(loaded.status);
+      setEngineSource(loaded.source);
+      setEngineError(loaded.error);
+      setSnapshot(loaded.engine.getSnapshot());
+      setEvents([]);
+      lastTimestampRef.current = null;
+      lastPublishRef.current = 0;
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [level]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -196,11 +241,13 @@ export function useGridEngine(level: LevelConfig): UseGridEngineResult {
     setIsPaused((paused) => !paused);
   }, []);
 
-  const runtimeStatus: GridRuntimeStatus = isPaused
-    ? "paused"
-    : isDocumentVisible
-      ? "running"
-      : "tab-hidden";
+  const runtimeStatus: GridRuntimeStatus = engineStatus === "error"
+    ? "error"
+    : isPaused
+      ? "paused"
+      : isDocumentVisible
+        ? "running"
+        : "tab-hidden";
 
   return {
     snapshot,
@@ -214,5 +261,8 @@ export function useGridEngine(level: LevelConfig): UseGridEngineResult {
     toggleAppliance,
     resetBreaker,
     restartLevel,
+    engineStatus,
+    engineSource,
+    engineError,
   };
 }
