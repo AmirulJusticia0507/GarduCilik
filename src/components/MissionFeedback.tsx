@@ -1,13 +1,14 @@
-import { INITIAL_LEVEL } from "../data/levels";
-import type { GridSnapshot } from "../types/grid";
+import type { GridSnapshot, LevelConfig } from "../types/grid";
 import { formatApparentPower, formatEnergy } from "../lib/format";
 
 interface MissionFeedbackProps {
   snapshot: GridSnapshot;
+  level: LevelConfig;
 }
 
-export function MissionFeedback({ snapshot }: MissionFeedbackProps) {
-  const requiredAppliances = INITIAL_LEVEL.mission.requiredApplianceIds.map(
+export function MissionFeedback({ snapshot, level }: MissionFeedbackProps) {
+  const mission = level.mission;
+  const requiredAppliances = mission.requiredApplianceIds.map(
     (id) => snapshot.appliances.find((appliance) => appliance.id === id),
   );
   const requiredOn = requiredAppliances.every(
@@ -16,9 +17,9 @@ export function MissionFeedback({ snapshot }: MissionFeedbackProps) {
   const isComplete =
     snapshot.phase !== "tripped" &&
     requiredOn &&
-    snapshot.elapsedSeconds >= INITIAL_LEVEL.mission.targetDurationSeconds &&
-    snapshot.meter.energyKwh <= INITIAL_LEVEL.mission.targetMaxEnergyKwh &&
-    snapshot.breaker.tripCount <= INITIAL_LEVEL.mission.targetMaxTrips;
+    snapshot.elapsedSeconds >= mission.targetDurationSeconds &&
+    snapshot.meter.energyKwh <= mission.targetMaxEnergyKwh &&
+    snapshot.breaker.tripCount <= mission.targetMaxTrips;
 
   const overload = snapshot.meter.status === "overload";
   const tripped = snapshot.phase === "tripped";
@@ -67,10 +68,10 @@ export function MissionFeedback({ snapshot }: MissionFeedbackProps) {
       className={`rounded-3xl border p-5 ${feedback.style}`}
     >
       <p className="text-xs font-bold tracking-[0.18em] uppercase">
-        Misi level 1 · 1.300 VA
+        Misi simulasi · {level.meterCapacityVA.toLocaleString("id-ID")} VA
       </p>
       <h2 id="mission-heading" className="mt-2 text-lg font-bold">
-        {INITIAL_LEVEL.mission.title}
+        {mission.title}
       </h2>
       <h3 className="mt-3 text-sm font-bold">{feedback.title}</h3>
       <p className="mt-2 text-sm leading-relaxed">
@@ -81,7 +82,7 @@ export function MissionFeedback({ snapshot }: MissionFeedbackProps) {
         <div className="rounded-xl bg-white/70 p-3">
           <p className="text-xs opacity-70">Waktu misi</p>
           <p className="mt-1 font-bold">
-            {Math.floor(snapshot.elapsedSeconds)} / {INITIAL_LEVEL.mission.targetDurationSeconds} dtk
+            {Math.floor(snapshot.elapsedSeconds)} / {mission.targetDurationSeconds} dtk
           </p>
         </div>
         <div className="rounded-xl bg-white/70 p-3">
@@ -91,7 +92,7 @@ export function MissionFeedback({ snapshot }: MissionFeedbackProps) {
         <div className="rounded-xl bg-white/70 p-3">
           <p className="text-xs opacity-70">Energi</p>
           <p className="mt-1 font-bold">
-            {formatEnergy(snapshot.meter.energyKwh)} / {formatEnergy(INITIAL_LEVEL.mission.targetMaxEnergyKwh)}
+            {formatEnergy(snapshot.meter.energyKwh)} / {formatEnergy(mission.targetMaxEnergyKwh)}
           </p>
         </div>
         <div className="col-span-2 rounded-xl bg-white/70 p-3 sm:col-span-1">

@@ -1,6 +1,6 @@
 "use client";
 
-import { INITIAL_LEVEL } from "../data/levels";
+import { useState } from "react";
 import { useGridEngine } from "../hooks/useGridEngine";
 import { ROOM_LABELS, ROOM_ORDER } from "../lib/labels";
 import { ApplianceControl } from "./ApplianceControl";
@@ -8,8 +8,20 @@ import { HouseVisualization } from "./HouseVisualization";
 import { McbBreakerBox } from "./McbBreakerBox";
 import { MissionFeedback } from "./MissionFeedback";
 import { PlnMeterPanel } from "./PlnMeterPanel";
+import { apiRequest, type ApiSession } from "../lib/api";
+import type { LevelConfig } from "../types/grid";
+import { INITIAL_LEVEL } from "../data/levels";
 
-export function SimulationDashboard() {
+interface SimulationDashboardProps {
+  level?: LevelConfig;
+  session?: ApiSession | null;
+}
+
+export function SimulationDashboard({
+  level = INITIAL_LEVEL,
+  session = null,
+}: SimulationDashboardProps) {
+  const [submitMessage, setSubmitMessage] = useState("");
   const {
     snapshot,
     runtimeStatus,
@@ -18,7 +30,7 @@ export function SimulationDashboard() {
     restartLevel,
     toggleAppliance,
     resetBreaker,
-  } = useGridEngine(INITIAL_LEVEL);
+  } = useGridEngine(level);
 
   const rooms = ROOM_ORDER.map((room) => ({
     room,
@@ -71,6 +83,41 @@ export function SimulationDashboard() {
           >
             {isPaused ? "Lanjutkan" : "Jeda"}
           </button>
+          {session ? (
+            <button
+              type="button"
+              onClick={() => {
+                setSubmitMessage("Mengirim hasil...");
+                void apiRequest<{ score: number; stars_earned: number }>(
+                  "/api/v1/sessions/submit",
+                  {
+                    method: "POST",
+                    headers: { Authorization: `Bearer ${session.token}` },
+                    body: JSON.stringify({
+                      scenario_id: session.scenarioId,
+                      classroom_id: session.classroomId,
+                      total_kwh_used: snapshot.meter.energyKwh,
+                      trip_count: snapshot.breaker.tripCount,
+                      duration_seconds: Math.max(1, Math.floor(snapshot.elapsedSeconds)),
+                    }),
+                  },
+                )
+                  .then((result) =>
+                    setSubmitMessage(
+                      `Hasil tersimpan: ${result.score} poin, ${result.stars_earned} bintang.`,
+                    ),
+                  )
+                  .catch(() =>
+                    setSubmitMessage(
+                      "Hasil belum terkirim. Simulasi tetap berjalan; sambungkan internet lalu coba lagi.",
+                    ),
+                  );
+              }}
+              className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+            >
+              Kirim hasil
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={() => {
@@ -90,7 +137,7 @@ export function SimulationDashboard() {
             appliances={snapshot.appliances}
             isPowered={!isTripped}
           />
-          <MissionFeedback snapshot={snapshot} />
+          <MissionFeedback snapshot={snapshot} level={level} />
 
           <section
             aria-labelledby="appliance-control-heading"
@@ -170,6 +217,11 @@ export function SimulationDashboard() {
           </section>
         </aside>
       </div>
+      {submitMessage ? (
+        <p role="status" aria-live="polite" className="text-sm text-slate-600">
+          {submitMessage}
+        </p>
+      ) : null}
     </div>
   );
 }

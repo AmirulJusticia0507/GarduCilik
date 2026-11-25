@@ -42,9 +42,15 @@ func main() {
 
 	a := &api{cfg: cfg, db: db}
 	app := fiber.New(fiber.Config{ErrorHandler: func(c *fiber.Ctx, err error) error {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "internal_server_error"})
+		status := fiber.StatusInternalServerError
+		message := "internal_server_error"
+		if fiberErr, ok := err.(*fiber.Error); ok {
+			status = fiberErr.Code
+			message = fiberErr.Message
+		}
+		return c.Status(status).JSON(fiber.Map{"error": message})
 	}})
-	app.Use(recover.New(), logger.New())
+	app.Use(recover.New(), logger.New(), cors())
 	app.Get("/health", a.health)
 	v1 := app.Group("/api/v1")
 	v1.Post("/auth/teacher/register", a.teacherRegister)
@@ -58,6 +64,25 @@ func main() {
 	v1.Get("/classrooms/:id/leaderboard", a.leaderboard)
 
 	log.Fatal(app.Listen(":" + cfg.Port))
+}
+
+func cors() fiber.Handler {
+	origin := os.Getenv("FRONTEND_ORIGIN")
+	if origin == "" {
+		origin = "http://localhost:3000"
+	}
+	return func(c *fiber.Ctx) error {
+		if c.Get("Origin") == origin {
+			c.Set("Access-Control-Allow-Origin", origin)
+			c.Set("Vary", "Origin")
+			c.Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+			c.Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		}
+		if c.Method() == fiber.MethodOptions {
+			return c.SendStatus(fiber.StatusNoContent)
+		}
+		return c.Next()
+	}
 }
 
 func loadDotEnv() {
@@ -97,16 +122,23 @@ func (a *api) teacherRegister(c *fiber.Ctx) error {
 	if err := body(c, &in); err != nil {
 		return err
 	}
-	if len(in.Password) < 8 || in.Name == "" || in.Email == "" {
+	if len(in.Password) < 8 || len(in.Password) > 72 || strings.TrimSpace(in.Name) == "" || strings.TrimSpace(in.Email) == "" {
 		return fiber.NewError(400, "name,email,password_min_8_required")
 	}
-	hash, _ := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return fiber.NewError(400, "invalid_password")
+	}
 	var u models.User
-	err := a.db.QueryRow(c.Context(), `INSERT INTO users(name,email,password_hash,role) VALUES($1,$2,$3,'teacher') RETURNING id,name,email,role,created_at`, in.Name, in.Email, string(hash)).Scan(&u.ID, &u.Name, &u.Email, &u.Role, &u.CreatedAt)
+	err = a.db.QueryRow(c.Context(), `INSERT INTO users(name,email,password_hash,role) VALUES($1,$2,$3,'teacher') RETURNING id,name,email,role,created_at`, in.Name, in.Email, string(hash)).Scan(&u.ID, &u.Name, &u.Email, &u.Role, &u.CreatedAt)
 	if err != nil {
 		return fiber.NewError(409, "email_already_exists")
 	}
-	return jsonResponse(c, 201, fiber.Map{"user": u})
+	token, err := auth.Issue(u.ID, string(u.Role), a.cfg.JWTSecret, a.cfg.JWTTTL)
+	if err != nil {
+		return err
+	}
+	return jsonResponse(c, 201, fiber.Map{"token": token, "user": u})
 }
 func (a *api) teacherLogin(c *fiber.Ctx) error {
 	var in teacherInput
@@ -136,7 +168,7 @@ func (a *api) studentJoin(c *fiber.Ctx) error {
 	if err := body(c, &in); err != nil {
 		return err
 	}
-	if in.Name == "" || in.JoinCode == "" {
+	if strings.TrimSpace(in.Name) == "" || strings.TrimSpace(in.JoinCode) == "" {
 		return fiber.NewError(400, "name_and_join_code_required")
 	}
 	tx, err := a.db.Begin(c.Context())
@@ -160,7 +192,7 @@ func (a *api) studentJoin(c *fiber.Ctx) error {
 		return err
 	}
 	token, err := auth.Issue(uid, "student", a.cfg.JWTSecret, a.cfg.JWTTTL)
-	return c.Status(201).JSON(fiber.Map{"token": token, "user": fiber.Map{"id": uid, "name": in.Name, "role": "student"}})
+	return c.Status(201).JSON(fiber.Map{"token": token, "classroom_id": cid, "user": fiber.Map{"id": uid, "name": in.Name, "role": "student"}})
 }
 
 func (a *api) requireRole(role string) fiber.Handler {
