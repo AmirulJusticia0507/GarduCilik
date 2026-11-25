@@ -53,7 +53,7 @@ export interface ApplianceDefinition {
   /** Daya aktif nominal saat beroperasi normal. */
   ratedPowerW: number;
   /** Rasio daya aktif terhadap daya semu, 0 < powerFactor <= 1. */
-  powerFactor: number;
+  powerFactor?: number;
   /**
    * Daya yang tetap ditarik saat perangkat dimatikan tetapi masih tercolok.
    * Modelkan sebagai 0 bila perangkat benar-benar terputus.
