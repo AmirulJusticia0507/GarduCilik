@@ -15,10 +15,10 @@ Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Repository s
 
 ## Backend Go / PostgreSQL
 
-- [ ] **T6 — Siapkan fondasi backend Go**: buat struktur `backend/`, aplikasi Fiber, konfigurasi environment, koneksi PostgreSQL, health endpoint, migrasi awal, `.env.example`, dan dokumentasi menjalankan server.
-- [ ] **T7 — Implementasikan model akun dan kelas**: buat skema serta endpoint autentikasi guru, siswa bergabung memakai kode kelas, pembuatan kelas, middleware JWT, dan pemeriksaan role.
-- [ ] **T8 — Implementasikan layanan skenario**: buat model dan endpoint daftar/detail skenario serta pembuatan skenario guru dengan validasi konfigurasi sebelum JSON dikirim ke engine WASM.
-- [ ] **T9 — Implementasikan submit progres dan leaderboard**: buat penyimpanan session log, validasi kewajaran skor/durasi/konsumsi di backend, dan leaderboard kelas.
+- [x] **T6 — Siapkan fondasi backend Go**: buat struktur `backend/`, aplikasi Fiber, konfigurasi environment, koneksi PostgreSQL, health endpoint, migrasi awal, `.env.example`, dan dokumentasi menjalankan server. **Selesai:** `backend/cmd/api`, config/store PostgreSQL, migrasi `001_init_schema.sql`, health check, dan README backend.
+- [x] **T7 — Implementasikan model akun dan kelas**: buat skema serta endpoint autentikasi guru, siswa bergabung memakai kode kelas, pembuatan kelas, middleware JWT, dan pemeriksaan role. **Selesai:** register/login guru, join siswa via kode, classroom creation, JWT HS256, role guard, dan tabel membership.
+- [x] **T8 — Implementasikan layanan skenario**: buat model dan endpoint daftar/detail skenario serta pembuatan skenario guru dengan validasi konfigurasi sebelum JSON dikirim ke engine WASM. **Selesai:** endpoint list/detail/create scenario dan validasi grid config/appliance.
+- [x] **T9 — Implementasikan submit progres dan leaderboard**: buat penyimpanan session log, validasi kewajaran skor/durasi/konsumsi di backend, dan leaderboard kelas. **Selesai:** submit session siswa, sanity check terhadap durasi/kWh, perhitungan stars/score, penyimpanan log, dan leaderboard kelas.
 
 ## Produk dan pengalaman belajar
 
