@@ -1,23 +1,41 @@
 # TODO GarduCilik
 
-Daftar ini disusun dari konsep di `readme.md`. Repository saat ini baru berisi dokumen konsep; tandai task selesai hanya setelah implementasi benar-benar tersedia.
+Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Repository saat ini berisi dokumentasi konsep; implementasi aplikasi, engine, dan API belum tersedia.
 
-## Task
+## Fondasi
 
-- [x] **T1 — Siapkan fondasi aplikasi Next.js + PWA**: inisialisasi Next.js App Router, TypeScript, Tailwind CSS, skrip pengembangan/build, dan struktur `src/` dasar. Tambahkan manifest web app, ikon PWA, metadata instalasi, service worker, serta strategi cache agar shell aplikasi dapat dibuka offline; pastikan perilaku offline tidak menyajikan data simulasi usang sebagai kondisi real-time. **Selesai:** Next.js 16 + TypeScript strict + Tailwind v4, manifest/ikon, service worker network-first untuk navigasi, precache aset hasil build, dan halaman `/offline`.
-- [x] **T2 — Rancang model domain simulasi**: definisikan tipe perangkat, konfigurasi level, status meter/MCB, dan kontrak API TypeScript untuk engine. **Selesai:** `src/types/grid.ts` memuat definisi perangkat, profil inrush, konfigurasi level & model termal MCB, snapshot meter/MCB, event edukatif, serta kontrak `GridEngine`.
-- [x] **T3 — Implementasikan engine simulasi awal**: buat kalkulasi beban VA, power factor, inrush sementara, akumulasi energi, serta model panas dan trip MCB yang parameterisasinya jelas. **Selesai:** `src/lib/simulation/engine.ts` + parameter default, validasi level, event trip/peringatan, reset breaker, restart level, dan 23 tes Vitest.
-- [x] **T4 — Hubungkan engine ke lifecycle UI**: buat hook `useGridEngine` dengan pembaruan waktu yang stabil, pembersihan animation frame, dan penanganan status simulasi. **Selesai:** hook RAF dengan throttle render 20 Hz, pause/visibility handling, antrean event, pembersihan loop, dan 7 tes lifecycle.
-- [ ] **T5 — Buat panel kontrol dan meter**: implementasikan meter PLN, indikator konsumsi/kapasitas, saklar perangkat, dan kontrol reset MCB.
-- [ ] **T6 — Buat tampilan rumah interaktif**: tampilkan perangkat, jalur aliran listrik, serta status kabel/MCB dengan aksesibilitas dan layout responsif.
-- [ ] **T7 — Tambahkan umpan balik edukatif dan misi MVP**: buat modal edukasi untuk kondisi beban berlebih/trip serta skenario level awal 1300 VA.
-- [ ] **T8 — Rapikan dokumentasi dan verifikasi rilis lokal**: perbaiki encoding README, sesuaikan instruksi instalasi dengan file yang benar-benar ada, dan jalankan pemeriksaan build yang tersedia.
+- [x] **T1 — Siapkan fondasi frontend Next.js + PWA**: inisialisasi Next.js App Router, TypeScript, Tailwind CSS, skrip dev/build, dan struktur `src/`. Tambahkan manifest web app, ikon, metadata instalasi, service worker, serta strategi cache shell aplikasi agar fitur simulasi sisi klien dapat dibuka offline.
+- [x] **T2 — Tetapkan kontrak data bersama**: definisikan skema konfigurasi level/perangkat, status simulasi, hasil sesi, aturan validasi, dan kontrak TypeScript yang selaras dengan format JSON `grid_config` pada dokumentasi backend.
 
-**Status:** T4 selesai. Task berikutnya yang perlu dikerjakan adalah T5.
+## Engine simulasi C++ / WebAssembly
 
-## Catatan urutan
+- [x] **T3 — Implementasikan engine simulasi C++**: buat struktur `engine-cpp/`, model perangkat dan level, kalkulasi daya aktif/semu, power factor, inrush sementara, akumulasi kWh, panas kabel, serta kurva trip MCB dengan parameter yang terdokumentasi.
+- [x] **T4 — Bangun binding dan artefak WebAssembly**: sediakan binding Embind dan build Emscripten yang menghasilkan modul JavaScript/WASM untuk frontend, beserta cara build yang dapat diulang.
+- [ ] **T5 — Integrasikan lifecycle engine ke frontend**: buat `useGridEngine` untuk memuat modul WASM, menerapkan konfigurasi JSON, menjalankan tick simulasi, mengelola status dan error, serta membersihkan `requestAnimationFrame` saat komponen dilepas.
 
-- Kerjakan task berurutan karena task UI bergantung pada fondasi dan kontrak simulasi.
-- PWA adalah dukungan instalasi dan akses offline untuk aplikasi simulasi sisi klien; seluruh fitur inti harus tetap bisa berjalan tanpa koneksi setelah aset aplikasi tersedia.
-- Setelah satu task selesai, perbarui statusnya, commit, push ke upstream yang sudah dikonfigurasi, lalu langsung lanjutkan ke task belum selesai berikutnya sesuai `AGENTS.md`.
-- Jika push tidak dapat dilakukan atau prasyarat repository belum tersedia, catat blocker; jangan mengklaim push berhasil.
+## Backend Go / PostgreSQL
+
+- [ ] **T6 — Siapkan fondasi backend Go**: buat struktur `backend/`, aplikasi Fiber, konfigurasi environment, koneksi PostgreSQL, health endpoint, migrasi awal, `.env.example`, dan dokumentasi menjalankan server.
+- [ ] **T7 — Implementasikan model akun dan kelas**: buat skema serta endpoint autentikasi guru, siswa bergabung memakai kode kelas, pembuatan kelas, middleware JWT, dan pemeriksaan role.
+- [ ] **T8 — Implementasikan layanan skenario**: buat model dan endpoint daftar/detail skenario serta pembuatan skenario guru dengan validasi konfigurasi sebelum JSON dikirim ke engine WASM.
+- [ ] **T9 — Implementasikan submit progres dan leaderboard**: buat penyimpanan session log, validasi kewajaran skor/durasi/konsumsi di backend, dan leaderboard kelas.
+
+## Produk dan pengalaman belajar
+
+- [x] **T10 — Buat panel meter dan kontrol perangkat**: tampilkan kapasitas VA, konsumsi, saklar perangkat, status MCB, dan kontrol reset. **Selesai:** dashboard level 1300 VA, meter PLN, indikator kapasitas, saklar perangkat, panel MCB/reset, dan tes komponen.
+- [ ] **T11 — Buat visualisasi rumah interaktif**: tampilkan denah/perangkat serta jalur aliran listrik dan status kabel secara responsif dan aksesibel.
+- [ ] **T12 — Tambahkan umpan balik edukatif dan misi awal**: jelaskan kondisi overload/trip dan buat skenario awal 1300 VA dengan sasaran belajar yang jelas.
+- [ ] **T13 — Hubungkan akun, skenario, dan progres ke frontend**: tambahkan alur guru/siswa, pemuatan skenario API, submit hasil, serta tampilan leaderboard; pastikan simulasi inti tetap dapat dimainkan offline dengan skenario lokal yang tersedia.
+
+## Dokumentasi dan rilis lokal
+
+- [ ] **T14 — Rapikan dokumentasi dan verifikasi aplikasi**: perbaiki encoding README, selaraskan dokumentasi root/backend dengan implementasi, jelaskan batas simulasi edukatif, dan jalankan pemeriksaan build yang sudah dikonfigurasi.
+
+## Catatan urutan dan alur kerja
+
+- Kerjakan task berurutan; kontrak data T2 menjadi acuan bersama untuk C++/WASM dan API backend.
+- Backend menyimpan akun, kelas, skenario, dan hasil sesi. Kalkulasi fisika real-time tetap dilakukan oleh engine C++/WASM di browser.
+- Validasi skor backend adalah pemeriksaan kewajaran, bukan jaminan anti-cheat penuh karena simulasi dan input awal berada di klien.
+- PWA mendukung instalasi dan akses offline. Jangan menampilkan data cache sebagai progres/leaderboard terbaru; tandai status offline dan sinkronkan data saat koneksi tersedia.
+- Setelah satu task selesai, perbarui statusnya, commit, push ke upstream yang sudah dikonfigurasi, lalu langsung lanjut ke task belum selesai berikutnya sesuai `AGENTS.md`.
+- Jika Git/upstream, kredensial, dependensi, atau layanan yang dibutuhkan menghalangi pekerjaan, catat blocker dan jangan mengklaim task sudah di-push.
