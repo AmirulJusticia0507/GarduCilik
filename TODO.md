@@ -23,8 +23,8 @@ Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Repository s
 ## Produk dan pengalaman belajar
 
 - [x] **T10 — Buat panel meter dan kontrol perangkat**: tampilkan kapasitas VA, konsumsi, saklar perangkat, status MCB, dan kontrol reset. **Selesai:** dashboard level 1300 VA, meter PLN, indikator kapasitas, saklar perangkat, panel MCB/reset, dan tes komponen.
-- [ ] **T11 — Buat visualisasi rumah interaktif**: tampilkan denah/perangkat serta jalur aliran listrik dan status kabel secara responsif dan aksesibel.
-- [ ] **T12 — Tambahkan umpan balik edukatif dan misi awal**: jelaskan kondisi overload/trip dan buat skenario awal 1300 VA dengan sasaran belajar yang jelas.
+- [x] **T11 — Buat visualisasi rumah interaktif**: tampilkan denah/perangkat serta jalur aliran listrik dan status kabel secara responsif dan aksesibel. **Selesai:** denah SVG rumah responsif, label ruangan/perangkat yang dapat dibaca pembaca layar, serta status jalur mengikuti perangkat dan kondisi MCB.
+- [x] **T12 — Tambahkan umpan balik edukatif dan misi awal**: jelaskan kondisi overload/trip dan buat skenario awal 1300 VA dengan sasaran belajar yang jelas. **Selesai:** misi rumah 1300 VA dengan perangkat wajib, target 60 detik/0,05 kWh/0 trip, umpan balik overload dan trip, serta penjelasan batas model edukatif.
 - [ ] **T13 — Hubungkan akun, skenario, dan progres ke frontend**: tambahkan alur guru/siswa, pemuatan skenario API, submit hasil, serta tampilan leaderboard; pastikan simulasi inti tetap dapat dimainkan offline dengan skenario lokal yang tersedia.
 
 ## Dokumentasi dan rilis lokal

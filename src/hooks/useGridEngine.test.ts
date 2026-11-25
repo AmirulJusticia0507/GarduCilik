@@ -10,6 +10,14 @@ const level: LevelConfig = {
   id: "hook-level",
   name: "Level Hook",
   description: "Level untuk pengujian hook.",
+  mission: {
+    title: "Misi uji",
+    description: "Misi untuk pengujian hook.",
+    targetDurationSeconds: 60,
+    targetMaxEnergyKwh: 0.1,
+    targetMaxTrips: 0,
+    requiredApplianceIds: ["lamp"],
+  },
   meterCapacityVA: 1300,
   breakerRatingVA: 1300,
   appliances: [

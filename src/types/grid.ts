@@ -127,6 +127,14 @@ export interface LevelConfig {
   id: LevelId;
   name: string;
   description: string;
+  mission: {
+    title: string;
+    description: string;
+    targetDurationSeconds: number;
+    targetMaxEnergyKwh: number;
+    targetMaxTrips: number;
+    requiredApplianceIds: readonly ApplianceId[];
+  };
   /** Kapasitas kontrak meteran PLN dalam VA. */
   meterCapacityVA: number;
   /** Rating pengaman MCB dalam VA; dapat berbeda dari kapasitas meter. */
@@ -138,6 +146,7 @@ export interface LevelConfig {
 export interface ApplianceSnapshot {
   id: ApplianceId;
   name: string;
+  category: ApplianceCategory;
   room: RoomId;
   isOn: boolean;
   inrushActive: boolean;

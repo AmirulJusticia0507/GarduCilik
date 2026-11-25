@@ -4,7 +4,9 @@ import { INITIAL_LEVEL } from "../data/levels";
 import { useGridEngine } from "../hooks/useGridEngine";
 import { ROOM_LABELS, ROOM_ORDER } from "../lib/labels";
 import { ApplianceControl } from "./ApplianceControl";
+import { HouseVisualization } from "./HouseVisualization";
 import { McbBreakerBox } from "./McbBreakerBox";
+import { MissionFeedback } from "./MissionFeedback";
 import { PlnMeterPanel } from "./PlnMeterPanel";
 
 export function SimulationDashboard() {
@@ -84,6 +86,11 @@ export function SimulationDashboard() {
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-5">
           <PlnMeterPanel snapshot={snapshot} />
+          <HouseVisualization
+            appliances={snapshot.appliances}
+            isPowered={!isTripped}
+          />
+          <MissionFeedback snapshot={snapshot} />
 
           <section
             aria-labelledby="appliance-control-heading"

@@ -92,6 +92,7 @@ function calculateLoads(state: EngineState, level: LevelConfig): LoadTotals {
       return {
         id: definition.id,
         name: definition.name,
+        category: definition.category,
         room: definition.room,
         isOn: appliance.isOn,
         inrushActive,

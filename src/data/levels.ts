@@ -13,6 +13,15 @@ export const INITIAL_LEVEL: LevelConfig = {
   name: "Rumah Hemat Energi",
   description:
     "Kelola perangkat rumah agar beban tetap di bawah kapasitas meteran 1300 VA dan MCB tidak turun.",
+  mission: {
+    title: "Pagi yang nyaman, listrik tetap aman",
+    description:
+      "Nyalakan lampu ruang tamu, lampu dapur, dan kulkas. Jaga beban di bawah 1.300 VA dan hindari MCB turun selama simulasi.",
+    targetDurationSeconds: 60,
+    targetMaxEnergyKwh: 0.05,
+    targetMaxTrips: 0,
+    requiredApplianceIds: ["lamp-living-room", "lamp-kitchen", "fridge"],
+  },
   meterCapacityVA: 1300,
   breakerRatingVA: 1300,
   appliances: [
