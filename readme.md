@@ -5,10 +5,10 @@ GarduCilik adalah simulasi edukasi berbasis web untuk mengenalkan beban listrik 
 ## Status aplikasi
 
 - Frontend: Next.js App Router, TypeScript, Tailwind CSS.
-- Mesin simulasi yang saat ini berjalan di browser: TypeScript deterministik di `src/lib/simulation/engine.ts`.
+- Mesin simulasi yang berjalan di browser: engine TypeScript deterministik di `src/lib/simulation/engine.ts`, dengan fallback otomatis bila artefak WASM belum dibangun.
+- Engine C++/WebAssembly: source dan binding Embind tersedia di `engine-cpp/`. Artefak `public/wasm/` dihasilkan oleh build Emscripten dan tidak di-commit.
 - PWA: manifest, ikon, service worker, halaman offline, dan cache aset build.
 - Backend kelas: REST API Go/Fiber dan PostgreSQL di `backend/` untuk akun guru/siswa, kelas, skenario, hasil sesi, dan leaderboard.
-- Integrasi engine C++/WebAssembly belum tersedia pada source saat ini. README lama menyebut rancangan WASM, tetapi belum ada `engine-cpp/` maupun artefak WASM pada repository.
 
 ## Menjalankan frontend
 
@@ -38,6 +38,22 @@ npm run build
 
 Service worker hanya didaftarkan pada build produksi. Jalankan `npm run build` lalu `npm start` untuk mencoba cache offline. Navigasi menggunakan network-first, aset bernama hash menggunakan cache-first, dan respons API tidak dicache; saat offline, data akun/peringkat tidak ditampilkan sebagai data terbaru.
 
+## Build engine WASM (opsional)
+
+Engine TypeScript sudah cukup untuk memainkan simulasi. Untuk memakai engine
+C++/WebAssembly, bangun artefaknya dari `engine-cpp/`:
+
+```powershell
+cd engine-cpp
+.\build.ps1          # bila em++ tersedia di PATH
+.\build.ps1 -Docker  # memakai image emscripten/emsdk
+```
+
+Hasilnya adalah `public/wasm/grid_engine.js` dan `grid_engine.wasm`. Loader
+`src/lib/simulation/wasm-loader.ts` akan memakai WASM bila artefak tersedia,
+atau kembali ke engine TypeScript dengan status `fallback` bila tidak. Detail
+kontrak dan cara menjalankan tes ada di [engine-cpp/README.md](engine-cpp/README.md).
+
 ## Menjalankan backend
 
 Lihat [backend/README.md](backend/README.md) untuk konfigurasi PostgreSQL, migrasi, endpoint, dan perintah menjalankan API. URL origin frontend dapat diatur melalui `FRONTEND_ORIGIN`; nilai lokal bawaan adalah `http://localhost:3000`.
@@ -56,6 +72,7 @@ src/
   hooks/               Lifecycle simulasi di browser
   lib/                 API client, format, dan engine TypeScript
   types/               Kontrak tipe simulasi
+engine-cpp/            Engine C++/WebAssembly dan binding Embind
 public/sw.js           Service worker
 backend/               API Go/Fiber dan migrasi PostgreSQL
 ```

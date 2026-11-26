@@ -36,6 +36,7 @@ yarn-error.log*
 
 # wasm build output (dihasilkan engine-cpp/build.sh)
 /public/wasm/
+/engine-cpp/build/
 
 # manifest precache (dihasilkan scripts/generate-precache-manifest.mjs)
 /public/precache-manifest.json

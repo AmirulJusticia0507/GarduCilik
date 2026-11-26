@@ -1,6 +1,6 @@
 # TODO GarduCilik
 
-Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Repository saat ini berisi dokumentasi konsep; implementasi aplikasi, engine, dan API belum tersedia.
+Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Implementasi frontend Next.js/PWA, engine TypeScript, engine C++/WASM, dan API Go sudah tersedia; artefak WASM dibangun lokal dan tidak di-commit.
 
 ## Fondasi
 
@@ -9,8 +9,8 @@ Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Repository s
 
 ## Engine simulasi C++ / WebAssembly
 
-- [x] **T3 — Implementasikan engine simulasi C++**: buat struktur `engine-cpp/`, model perangkat dan level, kalkulasi daya aktif/semu, power factor, inrush sementara, akumulasi kWh, panas kabel, serta kurva trip MCB dengan parameter yang terdokumentasi.
-- [x] **T4 — Bangun binding dan artefak WebAssembly**: sediakan binding Embind dan build Emscripten yang menghasilkan modul JavaScript/WASM untuk frontend, beserta cara build yang dapat diulang.
+- [x] **T3 — Implementasikan engine simulasi C++**: buat struktur `engine-cpp/`, model perangkat dan level, kalkulasi daya aktif/semu, power factor, inrush sementara, akumulasi kWh, panas kabel, serta kurva trip MCB dengan parameter yang terdokumentasi. **Selesai:** `engine-cpp/src/grid_engine.h`/`grid_engine.cpp` memuat validasi konfigurasi, snapshot, event, trip/reset, dan restart; tes native ada di `engine-cpp/tests/engine_test.cpp`.
+- [x] **T4 — Bangun binding dan artefak WebAssembly**: sediakan binding Embind dan build Emscripten yang menghasilkan modul JavaScript/WASM untuk frontend, beserta cara build yang dapat diulang. **Selesai:** `engine-cpp/src/embind_binding.cpp` mengekspor `createGridEngine`; `engine-cpp/build.sh` dan `build.ps1` menghasilkan `public/wasm/grid_engine.js` + `.wasm` (diabaikan Git); kontrak dan cara build didokumentasikan di `engine-cpp/README.md`.
 - [x] **T5 — Integrasikan lifecycle engine ke frontend**: buat `useGridEngine` untuk memuat modul WASM, menerapkan konfigurasi JSON, menjalankan tick simulasi, mengelola status dan error, serta membersihkan `requestAnimationFrame` saat komponen dilepas. **Selesai:** loader WASM client-only dengan `locateFile`, konfigurasi JSON, status `loading/ready/fallback/error`, fallback engine TypeScript yang eksplisit saat artefak belum tersedia, RAF pause/visibility, dan cleanup saat unmount.
 
 ## Backend Go / PostgreSQL
