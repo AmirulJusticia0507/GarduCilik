@@ -31,7 +31,7 @@ Rencana kerja berdasarkan `readme.md` dan `dokumentasi_backend.md`. Implementasi
 ## Dokumentasi dan rilis lokal
 
 - [x] **T14 — Rapikan dokumentasi dan verifikasi aplikasi**: perbaiki encoding README, selaraskan dokumentasi root/backend dengan implementasi, jelaskan batas simulasi edukatif, dan jalankan pemeriksaan build yang sudah dikonfigurasi. **Selesai:** README root/backend dan dokumentasi backend kini sesuai implementasi Next.js/PWA, engine TypeScript, dan API Go; batas model dan sifat sanity check dicantumkan; verifikasi typecheck, lint, 50 tes frontend, build produksi, serta tes Go dijalankan.
-- [ ] **T15 — Deploy frontend ke Vercel**: siapkan konfigurasi project Next.js untuk Vercel, atur environment variable `NEXT_PUBLIC_API_BASE_URL` ke API yang sudah dideploy, pastikan build dan PWA berjalan pada domain produksi, lalu dokumentasikan langkah deploy dan verifikasi URL live. Backend Go/PostgreSQL harus di-host terpisah; jangan masukkan rahasia backend ke konfigurasi frontend publik.
+- [ ] **T15 — Deploy frontend ke Vercel**: siapkan konfigurasi project Next.js untuk Vercel, atur environment variable `NEXT_PUBLIC_API_BASE_URL` ke API yang sudah dideploy, pastikan build dan PWA berjalan pada domain produksi, lalu dokumentasikan langkah deploy dan verifikasi URL live. Backend Go/PostgreSQL harus di-host terpisah; jangan masukkan rahasia backend ke konfigurasi frontend publik. **Blocker:** memerlukan akun/kredensial Vercel dan URL backend yang sudah di-host; jangan deploy atau memasukkan rahasia tanpa konfirmasi pengguna.
 
 ## Catatan urutan dan alur kerja
 
