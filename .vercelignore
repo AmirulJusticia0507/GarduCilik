@@ -1,0 +1,8 @@
+# Backend Go dan engine C++ tidak dipakai saat build frontend.
+/backend/
+/engine-cpp/
+
+# Artefak lokal; Vercel melakukan build sendiri dari source.
+/.next/
+/node_modules/
+/tsconfig.tsbuildinfo

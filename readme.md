@@ -58,6 +58,33 @@ kontrak dan cara menjalankan tes ada di [engine-cpp/README.md](engine-cpp/README
 
 Lihat [backend/README.md](backend/README.md) untuk konfigurasi PostgreSQL, migrasi, endpoint, dan perintah menjalankan API. URL origin frontend dapat diatur melalui `FRONTEND_ORIGIN`; nilai lokal bawaan adalah `http://localhost:3000`.
 
+## Deploy Vercel
+
+Frontend produksi: <https://garducilik.vercel.app> (project Vercel `garducilik`).
+
+```powershell
+vercel link --yes --project garducilik
+vercel deploy --prod --yes
+```
+
+Saat ini deployment berjalan dalam mode simulasi lokal karena backend belum
+memiliki URL publik. Setelah backend di-host, tambahkan environment variable
+produksi berikut lalu redeploy:
+
+```powershell
+vercel env add NEXT_PUBLIC_API_BASE_URL production
+vercel deploy --prod --yes
+```
+
+Di sisi backend, set `FRONTEND_ORIGIN=https://garducilik.vercel.app` agar CORS
+mengizinkan origin produksi. Jangan menaruh `JWT_SECRET`, kredensial database,
+atau rahasia backend lain di environment frontend.
+
+`.vercelignore` mengecualikan `backend/` dan `engine-cpp/` dari upload. Artefak
+`public/wasm/` hanya ikut ter-deploy bila dibangun lokal sebelum `vercel deploy`;
+deployment dari Git akan memakai fallback engine TypeScript karena artefak WASM
+tidak di-commit.
+
 ## Batas model edukasi
 
 Model beban, faktor daya, arus awal, panas kabel, dan trip MCB disederhanakan serta dipercepat agar mudah diamati dalam permainan. Hasilnya bukan panduan untuk merancang, memasang, memeriksa, atau mengambil keputusan keselamatan instalasi listrik nyata. Validasi hasil di backend hanya pemeriksaan kewajaran atas data yang dikirim klien, bukan proteksi anti-cheat penuh.
